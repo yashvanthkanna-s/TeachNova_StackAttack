@@ -40,7 +40,7 @@ async function run() {
     console.log("Creating table repo_health_snapshots...");
     await client.query(createTableQuery);
     console.log("✅ Table created successfully!");
-    
+
   } catch (err) {
     console.error("❌ Error setting up database:", err);
   } finally {

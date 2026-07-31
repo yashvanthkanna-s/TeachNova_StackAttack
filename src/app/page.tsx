@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, ShieldAlert, GitPullRequest, GitCommit, HeartPulse, RefreshCw } from "lucide-react";
+import { Activity, ShieldAlert, GitCommit, HeartPulse, RefreshCw, Users, Clock } from "lucide-react";
 import { RepoMetrics } from "./api/sync/route";
 
 export default function Home() {
@@ -10,6 +10,7 @@ export default function Home() {
     metrics: RepoMetrics;
     calculatedScore: number;
     aiRecommendation: string;
+    dbSaved?: boolean;
   } | null>(null);
 
   const handleSync = async () => {
@@ -18,7 +19,7 @@ export default function Home() {
       const res = await fetch("/api/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repoOwner: "my-org", repoName: "core-service" }),
+        body: JSON.stringify({}),
       });
       const result = await res.json();
       if (result.success) {
@@ -39,9 +40,9 @@ export default function Home() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
               <Activity className="text-emerald-500" size={32} />
-              Git Repository Health
+              Git Repository Health Dashboard
             </h1>
-            <p className="text-slate-400 mt-1">Live AI-driven observability dashboard</p>
+            <p className="text-slate-400 mt-1">Air-Gapped Telemetry Engine (No External APIs & No AI)</p>
           </div>
           <button
             onClick={handleSync}
@@ -49,14 +50,14 @@ export default function Home() {
             className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-md font-medium transition-all disabled:opacity-50"
           >
             <RefreshCw className={loading ? "animate-spin" : ""} size={18} />
-            {loading ? "Syncing metrics..." : "Sync Now"}
+            {loading ? "Parsing Git Log..." : "Sync Telemetry"}
           </button>
         </div>
 
         {/* Dashboard Content */}
         {!data ? (
           <div className="flex flex-col items-center justify-center h-64 border border-dashed border-slate-800 rounded-xl bg-slate-900/50">
-            <p className="text-slate-500">Click "Sync Now" to fetch live repository metrics.</p>
+            <p className="text-slate-500">Click "Sync Telemetry" to parse native Git logs & calculate health score.</p>
           </div>
         ) : (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -76,12 +77,17 @@ export default function Home() {
                   </span>
                   <span className="text-slate-500">/ 100</span>
                 </div>
+                {data.dbSaved && (
+                  <span className="inline-block mt-3 px-2.5 py-1 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/40 rounded-full">
+                    Saved to AWS RDS
+                  </span>
+                )}
               </div>
 
-              {/* AI Insight Panel */}
+              {/* Deterministic Rules Engine Insight Panel */}
               <div className="md:col-span-2 bg-slate-900 border border-indigo-900/50 p-6 rounded-xl shadow-[0_0_15px_rgba(99,102,241,0.1)]">
                 <h3 className="text-indigo-400 font-medium mb-3 flex items-center gap-2">
-                  <span className="text-lg">✨</span> AI DevOps Recommendation
+                  <span className="text-lg">⚙️</span> Deterministic Rules Engine Advice
                 </h3>
                 <p className="text-slate-300 leading-relaxed text-sm">
                   {data.aiRecommendation}
@@ -90,32 +96,32 @@ export default function Home() {
             </div>
 
             {/* Metrics Grid */}
-            <h3 className="text-xl font-semibold text-white pt-4">Deep Dive Metrics</h3>
+            <h3 className="text-xl font-semibold text-white pt-4">Native Git Telemetry Metrics</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               
               <MetricCard 
-                icon={<GitPullRequest className="text-blue-400" />}
-                title="Avg PR Velocity"
-                value={`${data.metrics.prVelocityDays} days`}
-                isWarning={data.metrics.prVelocityDays > 2}
+                icon={<GitCommit className="text-blue-400" />}
+                title="Code Churn (LOC)"
+                value={`${data.metrics.codeChurn.toLocaleString()} lines`}
+                isWarning={data.metrics.codeChurn > 5000}
               />
               <MetricCard 
-                icon={<Activity className="text-emerald-400" />}
-                title="CI Failure Rate"
-                value={`${data.metrics.ciFailureRate * 100}%`}
-                isWarning={data.metrics.ciFailureRate > 0.1}
+                icon={<Clock className="text-emerald-400" />}
+                title="Stagnation Risk"
+                value={`${data.metrics.stagnationRiskDays} days`}
+                isWarning={data.metrics.stagnationRiskDays > 7}
               />
               <MetricCard 
                 icon={<ShieldAlert className="text-red-400" />}
-                title="Security Alerts"
-                value={data.metrics.openDependabotAlerts.toString()}
-                isWarning={data.metrics.openDependabotAlerts > 0}
+                title="Burnout Risk"
+                value={`${Math.round(data.metrics.burnoutRiskPercent * 100)}%`}
+                isWarning={data.metrics.burnoutRiskPercent > 0.2}
               />
               <MetricCard 
-                icon={<GitCommit className="text-amber-400" />}
-                title="Burnout Risk"
-                value={`${data.metrics.burnoutRiskPercent * 100}%`}
-                isWarning={data.metrics.burnoutRiskPercent > 0.2}
+                icon={<Users className="text-amber-400" />}
+                title="Bus Factor Dominance"
+                value={`${Math.round(data.metrics.busFactorPercent * 100)}%`}
+                isWarning={data.metrics.busFactorPercent > 0.5}
               />
             </div>
           </div>
