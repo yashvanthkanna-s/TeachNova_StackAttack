@@ -11,6 +11,7 @@ export type RepoMetrics = {
   burnoutRiskPercent: number; // Keeping for DB schema compatibility, but ignoring in UI
   busFactorPercent: number;
   openPrsCount: number; // NEW: PR Bottlenecks
+  topContributor?: { login: string; avatarUrl: string; commitsCount: number };
 };
 
 // --- 1. GitHub REST API Fetcher ---
@@ -50,17 +51,31 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
     const diffTime = Math.abs(now.getTime() - latestCommitDate.getTime());
     const stagnationRiskDays = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
 
-    // 2. Bus Factor
+    // 2. Bus Factor & Key Engineer Profiler
     const authorCounts: Record<string, number> = {};
+    const authorProfiles: Record<string, { login: string; avatarUrl: string }> = {};
+    
     commits.forEach((c: any) => {
       const author = c.commit.author.email || 'unknown';
       authorCounts[author] = (authorCounts[author] || 0) + 1;
+      
+      if (c.author && c.author.login && !authorProfiles[author]) {
+        authorProfiles[author] = { login: c.author.login, avatarUrl: c.author.avatar_url };
+      }
     });
     
     let maxCommits = 0;
-    Object.values(authorCounts).forEach(count => {
-      if (count > maxCommits) maxCommits = count;
+    let topAuthorEmail = '';
+    Object.entries(authorCounts).forEach(([email, count]) => {
+      if (count > maxCommits) {
+        maxCommits = count;
+        topAuthorEmail = email;
+      }
     });
+    
+    const topContributor = authorProfiles[topAuthorEmail] 
+      ? { ...authorProfiles[topAuthorEmail], commitsCount: maxCommits } 
+      : undefined;
     const busFactorPercent = Number((maxCommits / commits.length).toFixed(2));
 
     // 3. Code Churn (Fetch stats for last 5 commits)
@@ -80,7 +95,8 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
       stagnationRiskDays,
       burnoutRiskPercent: 0, // Ignored in UI
       busFactorPercent,
-      openPrsCount
+      openPrsCount,
+      topContributor
     };
   } catch (error) {
     console.error("Failed to fetch from GitHub API:", error);

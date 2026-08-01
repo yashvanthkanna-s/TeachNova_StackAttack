@@ -88,7 +88,7 @@ export default function Home() {
           <main className="space-y-8">
             
             {/* Top Level Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               
               {/* Health Score Card */}
               <div className="bg-[#111] border border-white/10 p-8 rounded-lg flex flex-col justify-between">
@@ -110,6 +110,28 @@ export default function Home() {
                 <p className="text-gray-300 leading-relaxed text-base">
                   {data.aiRecommendation}
                 </p>
+              </div>
+
+              {/* Key Engineer Profiler */}
+              <div className="bg-[#111] border border-white/10 p-6 rounded-lg flex flex-col items-center justify-center text-center relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-amber-500/50"></div>
+                <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4">Key Engineer Risk</h3>
+                
+                {data.metrics.topContributor ? (
+                  <>
+                    <img 
+                      src={data.metrics.topContributor.avatarUrl} 
+                      alt="Top Contributor" 
+                      className="w-20 h-20 rounded-full border-2 border-amber-500/30 mb-3 shadow-[0_0_15px_rgba(245,158,11,0.2)]"
+                    />
+                    <div className="text-white font-bold text-lg mb-1">@{data.metrics.topContributor.login}</div>
+                    <div className="text-amber-400/80 text-xs font-medium bg-amber-400/10 px-3 py-1 rounded-full">
+                      Bottleneck: {data.metrics.topContributor.commitsCount} Commits
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-gray-500 text-sm italic mt-4">No dominant contributor</div>
+                )}
               </div>
             </div>
 
