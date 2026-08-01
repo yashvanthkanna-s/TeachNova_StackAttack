@@ -14,9 +14,7 @@ export type RepoMetrics = {
 };
 
 // --- 1. GitHub REST API Fetcher ---
-async function fetchGitHubMetrics(): Promise<RepoMetrics> {
-  const owner = 'yashvanthkanna-s';
-  const repo = 'TeachNova_StackAttack';
+async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetrics> {
   const repoName = `${owner}/${repo}`;
   
   const headers: HeadersInit = {
@@ -78,7 +76,7 @@ async function fetchGitHubMetrics(): Promise<RepoMetrics> {
 
     return {
       repoName,
-      codeChurn: codeChurn * 4,
+      codeChurn: codeChurn,
       stagnationRiskDays,
       burnoutRiskPercent: 0, // Ignored in UI
       busFactorPercent,
@@ -160,9 +158,13 @@ async function saveHealthSnapshot(metrics: RepoMetrics, score: number) {
 }
 
 // --- 4. The "Sync Now" API Endpoint ---
-export async function POST() {
+export async function POST(req: Request) {
   try {
-    const metrics = await fetchGitHubMetrics();
+    const body = await req.json().catch(() => ({}));
+    const owner = body.owner || 'yashvanthkanna-s';
+    const repo = body.repo || 'TeachNova_StackAttack';
+    
+    const metrics = await fetchGitHubMetrics(owner, repo);
     const { score, recommendations } = calculateHealthScore(metrics);
     const recommendationText = `Health Score: ${score}/100. ` + recommendations.join(' ');
 

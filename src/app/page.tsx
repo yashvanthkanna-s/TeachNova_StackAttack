@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, GitCommit, RefreshCw, Users, Clock, GitPullRequest } from "lucide-react";
+import { Activity, GitCommit, RefreshCw, Users, Clock, GitPullRequest, CheckCircle2 } from "lucide-react";
 import { RepoMetrics } from "./api/sync/route";
 
 export default function Home() {
@@ -13,13 +13,27 @@ export default function Home() {
     dbSaved?: boolean;
   } | null>(null);
 
+  const [selectedRepo, setSelectedRepo] = useState("yashvanthkanna-s/TeachNova_StackAttack");
+  const availableRepos = [
+    "yashvanthkanna-s/TeachNova_StackAttack",
+    "kmanojb0622/Discourse",
+    "asanalmahathir/Music-Player",
+    "yashvanthkanna-s/SaaSVera",
+    "yashvanthkanna-s/AegisVison-AI",
+    "yashvanthkanna-s/chatbox",
+    "yashvanthkanna-s/VaultiFy",
+    "yashvanthkanna-s/MUSIC-PLAYER-UI",
+    "yashvanthkanna-s/saas-ui"
+  ];
+
   const handleSync = async () => {
     setLoading(true);
     try {
+      const [owner, repo] = selectedRepo.split('/');
       const res = await fetch("/api/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ owner, repo }),
       });
       const result = await res.json();
       if (result.success) {
@@ -32,102 +46,124 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8 font-sans">
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#0a0a0a] text-gray-200 p-6 md:p-12 font-sans antialiased selection:bg-blue-500/30">
+      <div className="max-w-7xl mx-auto space-y-10">
         
         {/* Header Section */}
-        <div className="flex justify-between items-center border-b border-gray-800 pb-6">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/10 pb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-              <Activity className="text-blue-500" size={32} />
-              Git Repository Health Dashboard
+            <h1 className="text-2xl font-semibold tracking-tight text-white flex items-center gap-3">
+              <Activity className="text-blue-500" size={24} />
+              Git Repository Health
             </h1>
-            <p className="text-gray-400 mt-2 font-medium">Powered by GitHub REST API & AWS RDS</p>
+            <p className="text-gray-400 mt-1.5 text-sm">Enterprise Telemetry via GitHub REST API & AWS RDS</p>
           </div>
-          <button
-            onClick={handleSync}
-            disabled={loading}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded font-bold transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={loading ? "animate-spin" : ""} size={18} />
-            {loading ? "Fetching GitHub Data..." : "Sync Telemetry"}
-          </button>
-        </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <select
+              value={selectedRepo}
+              onChange={(e) => setSelectedRepo(e.target.value)}
+              className="bg-[#111] border border-white/10 text-white px-4 py-2.5 rounded-md text-sm font-medium outline-none focus:border-blue-500 transition-colors"
+            >
+              {availableRepos.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+            <button
+              onClick={handleSync}
+              disabled={loading}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={loading ? "animate-spin" : ""} size={16} />
+              {loading ? "Syncing..." : "Sync Telemetry"}
+            </button>
+          </div>
+        </header>
 
         {/* Dashboard Content */}
         {!data ? (
-          <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-gray-800 rounded-xl bg-gray-900/30">
-            <p className="text-gray-400 font-bold text-lg">Click "Sync Telemetry" to fetch live GitHub data & calculate health score.</p>
+          <div className="flex flex-col items-center justify-center h-[40vh] border border-white/10 rounded-lg bg-[#111]">
+            <p className="text-gray-400 text-sm">Click "Sync Telemetry" to fetch live data and run the rules engine.</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <main className="space-y-8">
             
             {/* Top Level Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
               {/* Health Score Card */}
-              <div className="bg-gray-900 border border-gray-800 p-6 rounded-xl">
-                <h3 className="text-gray-400 font-bold mb-2 uppercase tracking-wider text-sm">Overall Health Score</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className={`text-6xl font-extrabold ${data.calculatedScore > 80 ? 'text-green-500' : data.calculatedScore > 60 ? 'text-yellow-500' : 'text-red-500'}`}>
-                    {data.calculatedScore}
-                  </span>
-                  <span className="text-gray-500 font-bold">/ 100</span>
-                </div>
+              <div className="bg-[#111] border border-white/10 p-8 rounded-lg flex flex-col justify-between">
+                <h3 className="text-gray-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center">Overall Health Score</h3>
+                <ScoreGauge score={data.calculatedScore} />
                 {data.dbSaved && (
-                  <div className="mt-4">
-                    <span className="px-3 py-1 text-xs font-bold text-green-400 bg-green-900/50 border border-green-800 rounded">
-                      Successfully Saved to AWS RDS
-                    </span>
+                  <div className="mt-6 flex items-center gap-2 text-xs text-emerald-400/80 bg-emerald-400/10 border border-emerald-400/20 px-3 py-1.5 rounded w-fit">
+                    <CheckCircle2 size={14} />
+                    Persisted to AWS RDS
                   </div>
                 )}
               </div>
 
               {/* Deterministic Rules Engine Insight Panel */}
-              <div className="md:col-span-2 bg-gray-900 border border-blue-900/50 p-6 rounded-xl">
-                <h3 className="text-blue-400 font-bold mb-3 uppercase tracking-wider text-sm flex items-center gap-2">
-                  Deterministic Rules Engine Advice
+              <div className="lg:col-span-2 bg-[#111] border-l-4 border-blue-500 border-y border-r border-white/10 p-8 rounded-lg rounded-l-none">
+                <h3 className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  Rules Engine Analysis
                 </h3>
-                <p className="text-white leading-relaxed text-lg font-medium">
+                <p className="text-gray-300 leading-relaxed text-base">
                   {data.aiRecommendation}
                 </p>
               </div>
             </div>
 
             {/* Metrics Grid */}
-            <h3 className="text-xl font-bold text-white pt-4 border-b border-gray-800 pb-2">Live GitHub Metrics</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              
-              <MetricCard 
-                icon={<GitCommit className="text-blue-400" size={24} />}
-                title="Code Churn"
-                value={`${data.metrics.codeChurn.toLocaleString()}`}
-                subtitle="lines changed"
-                isWarning={data.metrics.codeChurn > 5000}
-              />
-              <MetricCard 
-                icon={<Clock className="text-green-400" size={24} />}
-                title="Stagnation Risk"
-                value={`${data.metrics.stagnationRiskDays}`}
-                subtitle="days since last commit"
-                isWarning={data.metrics.stagnationRiskDays > 7}
-              />
-              <MetricCard 
-                icon={<Users className="text-orange-400" size={24} />}
-                title="Bus Factor Dominance"
-                value={`${Math.round(data.metrics.busFactorPercent * 100)}%`}
-                subtitle="top contributor share"
-                isWarning={data.metrics.busFactorPercent > 0.5}
-              />
-              <MetricCard 
-                icon={<GitPullRequest className="text-purple-400" size={24} />}
-                title="PR Bottlenecks"
-                value={`${data.metrics.openPrsCount || 0}`}
-                subtitle="open pull requests"
-                isWarning={(data.metrics.openPrsCount || 0) > 5}
-              />
-            </div>
-          </div>
+            <section>
+              <h3 className="text-sm font-semibold text-white mb-4">Live Repository Metrics</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <MetricCard 
+                  icon={<GitCommit className="text-blue-400" size={20} />}
+                  title="Code Churn"
+                  value={`${data.metrics.codeChurn.toLocaleString()}`}
+                  subtitle="Lines changed"
+                  isWarning={data.metrics.codeChurn > 5000}
+                />
+                <MetricCard 
+                  icon={<Clock className="text-emerald-400" size={20} />}
+                  title="Stagnation Risk"
+                  value={`${data.metrics.stagnationRiskDays}`}
+                  subtitle="Days since last commit"
+                  isWarning={data.metrics.stagnationRiskDays > 7}
+                />
+                <MetricCard 
+                  icon={<Users className="text-amber-400" size={20} />}
+                  title="Bus Factor"
+                  value={`${Math.round(data.metrics.busFactorPercent * 100)}%`}
+                  subtitle="Top contributor share"
+                  isWarning={data.metrics.busFactorPercent > 0.5}
+                />
+                <MetricCard 
+                  icon={<GitPullRequest className="text-purple-400" size={20} />}
+                  title="PR Bottlenecks"
+                  value={`${data.metrics.openPrsCount || 0}`}
+                  subtitle="Open pull requests"
+                  isWarning={(data.metrics.openPrsCount || 0) > 5}
+                />
+              </div>
+            </section>
+
+            {/* Grafana Public Dashboard */}
+            <section className="pt-4">
+              <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana)</h3>
+              <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[600px] w-full relative">
+                <iframe 
+                  src="https://mellowstarfish834.grafana.net/public-dashboards/26a994db98a94131a78fafc8f7d219b6?theme=dark" 
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0"
+                  title="Grafana Public Dashboard"
+                  className="w-full h-full relative z-10"
+                ></iframe>
+              </div>
+            </section>
+
+          </main>
         )}
       </div>
     </div>
@@ -136,16 +172,54 @@ export default function Home() {
 
 function MetricCard({ icon, title, value, subtitle, isWarning }: { icon: React.ReactNode, title: string, value: string, subtitle: string, isWarning: boolean }) {
   return (
-    <div className={`bg-gray-900 border p-6 rounded-xl flex flex-col gap-3 ${isWarning ? 'border-red-600' : 'border-gray-800'}`}>
-      <div className="flex items-center gap-3">
+    <div className={`bg-[#111] border p-6 rounded-lg transition-colors hover:border-gray-600 ${isWarning ? 'border-rose-500/50' : 'border-white/10'}`}>
+      <div className="flex items-center gap-3 mb-4">
         {icon}
-        <span className="text-gray-400 text-sm font-bold uppercase tracking-wider">{title}</span>
+        <span className="text-gray-400 text-xs font-semibold uppercase tracking-widest">{title}</span>
       </div>
       <div>
-        <div className={`text-4xl font-extrabold ${isWarning ? 'text-red-500' : 'text-white'}`}>
+        <div className={`text-3xl font-bold tracking-tight ${isWarning ? 'text-rose-400' : 'text-white'}`}>
           {value}
         </div>
-        <div className="text-gray-500 text-sm font-medium mt-1">{subtitle}</div>
+        <div className="text-gray-500 text-xs mt-1.5">{subtitle}</div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreGauge({ score }: { score: number }) {
+  const radius = 60;
+  const circumference = Math.PI * radius;
+  const strokeDashoffset = circumference - (score / 100) * circumference;
+  
+  const colorClass = score > 80 ? "text-emerald-400" : score > 60 ? "text-amber-400" : "text-rose-400";
+  const strokeColor = score > 80 ? "#34d399" : score > 60 ? "#fbbf24" : "#fb7185";
+
+  return (
+    <div className="relative flex flex-col items-center justify-center mt-2">
+      <svg className="w-48 h-28" viewBox="0 0 160 100">
+        <path
+          d="M 20 90 A 60 60 0 0 1 140 90"
+          fill="none"
+          stroke="#222"
+          strokeWidth="16"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 20 90 A 60 60 0 0 1 140 90"
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="16"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          className="transition-all duration-1000 ease-out"
+        />
+      </svg>
+      <div className="absolute bottom-0 flex items-baseline gap-1">
+        <span className={`text-5xl font-bold tracking-tighter ${colorClass}`}>
+          {score}
+        </span>
       </div>
     </div>
   );
