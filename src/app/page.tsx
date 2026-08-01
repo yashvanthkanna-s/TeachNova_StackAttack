@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Activity, GitCommit, RefreshCw, Users, Clock, GitPullRequest, CheckCircle2 } from "lucide-react";
-import { RepoMetrics } from "./api/sync/route";
+import { Activity, GitCommit, RefreshCw, Users, Clock, GitPullRequest, CheckCircle2, AlertTriangle, XCircle, CheckCircle } from "lucide-react";
+import { RepoMetrics, RuleAlert } from "./api/sync/route";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -10,6 +10,7 @@ export default function Home() {
     metrics: RepoMetrics;
     calculatedScore: number;
     aiRecommendation: string;
+    alerts?: RuleAlert[];
     dbSaved?: boolean;
   } | null>(null);
 
@@ -103,13 +104,29 @@ export default function Home() {
               </div>
 
               {/* Deterministic Rules Engine Insight Panel */}
-              <div className="lg:col-span-2 bg-[#111] border-l-4 border-blue-500 border-y border-r border-white/10 p-8 rounded-lg rounded-l-none">
+              <div className="lg:col-span-2 bg-[#111] border-l-4 border-blue-500 border-y border-r border-white/10 p-6 rounded-lg rounded-l-none flex flex-col">
                 <h3 className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
                   Rules Engine Analysis
                 </h3>
-                <p className="text-gray-300 leading-relaxed text-base">
-                  {data.aiRecommendation}
-                </p>
+                <div className="flex-1 flex flex-col gap-3">
+                  {data.alerts?.map((alert, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`flex items-start gap-3 p-3 rounded border bg-opacity-10 ${
+                        alert.type === 'success' ? 'bg-emerald-500 border-emerald-500/20 text-emerald-400' :
+                        alert.type === 'warning' ? 'bg-amber-500 border-amber-500/20 text-amber-400' :
+                        'bg-rose-500 border-rose-500/20 text-rose-400'
+                      }`}
+                    >
+                      <div className="mt-0.5">
+                        {alert.type === 'success' && <CheckCircle size={16} />}
+                        {alert.type === 'warning' && <AlertTriangle size={16} />}
+                        {alert.type === 'error' && <XCircle size={16} />}
+                      </div>
+                      <span className="text-sm font-medium leading-tight text-gray-200">{alert.message}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Key Engineer Profiler */}

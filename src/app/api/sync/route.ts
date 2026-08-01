@@ -106,33 +106,38 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
 }
 
 // --- 2. Deterministic Rules Engine ---
-export function calculateHealthScore(metrics: RepoMetrics): { score: number; recommendations: string[] } {
+export type RuleAlert = { type: 'success' | 'warning' | 'error', message: string };
+
+export function calculateHealthScore(metrics: RepoMetrics): { score: number; recommendations: RuleAlert[] } {
   let score = 100;
-  const recommendations: string[] = [];
+  const recommendations: RuleAlert[] = [];
 
   if (metrics.stagnationRiskDays > 7) {
     score -= Math.min((metrics.stagnationRiskDays - 7) * 2, 25);
-    recommendations.push(`High stagnation risk: No commits in ${metrics.stagnationRiskDays} days.`);
+    recommendations.push({ type: 'error', message: `High stagnation risk: No commits in ${metrics.stagnationRiskDays} days.` });
+  } else {
+    recommendations.push({ type: 'success', message: 'Active development timeline.' });
   }
 
   if (metrics.busFactorPercent > 0.50) {
     score -= Math.min((metrics.busFactorPercent - 0.50) * 60, 25);
-    recommendations.push(`High bus factor: Single top contributor accounts for ${Math.round(metrics.busFactorPercent * 100)}% of commits. Recommend cross-training.`);
+    recommendations.push({ type: 'warning', message: `High bus factor: Single top contributor accounts for ${Math.round(metrics.busFactorPercent * 100)}% of commits.` });
+  } else {
+    recommendations.push({ type: 'success', message: 'Healthy team contributor distribution.' });
   }
 
   if (metrics.codeChurn > 5000) {
     score -= Math.min(Math.floor((metrics.codeChurn - 5000) / 1000) * 2, 20);
-    recommendations.push(`High code churn (${metrics.codeChurn} LOC changed). Consider breaking PRs into smaller, modular iterations.`);
+    recommendations.push({ type: 'warning', message: `High code churn (${metrics.codeChurn} LOC). Consider smaller PR iterations.` });
+  } else {
+    recommendations.push({ type: 'success', message: 'Code churn is stable and maintainable.' });
   }
 
-  // NEW: PR Bottleneck Penalty
   if (metrics.openPrsCount > 5) {
     score -= Math.min((metrics.openPrsCount - 5) * 5, 20);
-    recommendations.push(`PR Bottleneck Detected: ${metrics.openPrsCount} open pull requests. The team is blocked waiting for code reviews.`);
-  }
-
-  if (recommendations.length === 0) {
-    recommendations.push('Repository health is optimal with low volatility, active commits, and zero PR bottlenecks.');
+    recommendations.push({ type: 'error', message: `PR Bottleneck: ${metrics.openPrsCount} open pull requests waiting for review.` });
+  } else {
+    recommendations.push({ type: 'success', message: 'Pull request workflow is unblocked.' });
   }
 
   const finalScore = Math.max(0, Math.min(100, Math.round(score)));
@@ -182,7 +187,7 @@ export async function POST(req: Request) {
     
     const metrics = await fetchGitHubMetrics(owner, repo);
     const { score, recommendations } = calculateHealthScore(metrics);
-    const recommendationText = `Health Score: ${score}/100. ` + recommendations.join(' ');
+    const recommendationText = `Health Score: ${score}/100.`;
 
     const snapshot = await saveHealthSnapshot(metrics, score);
 
@@ -193,6 +198,7 @@ export async function POST(req: Request) {
         metrics,
         calculatedScore: score,
         aiRecommendation: recommendationText,
+        alerts: recommendations,
         dbSaved: !!snapshot,
       },
     });
