@@ -218,23 +218,35 @@ export default function Home() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* Panel 1: Code Churn */}
-                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full flex items-center justify-center relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
-                  <img 
-                    src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-1`}
-                    alt="Code Churn Over Time"
-                    className="w-full h-full object-cover relative z-10"
-                  />
+                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden w-full relative">
+                  <div className="h-[400px] flex items-center justify-center relative">
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
+                    <img 
+                      src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-1`}
+                      alt="Code Churn Over Time"
+                      className="w-full h-full object-cover relative z-10"
+                    />
+                  </div>
+                  <div className="p-4 bg-[#151515] border-t border-white/10">
+                    <h4 className="text-sm font-semibold text-white mb-1">Code Churn Over Time</h4>
+                    <p className="text-xs text-gray-400">Tracks the total volume of lines changed (added and deleted). High churn indicates major rewrites or risky monolithic PRs.</p>
+                  </div>
                 </div>
 
                 {/* Panel 2: Bus Factor */}
-                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full flex items-center justify-center relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
-                  <img 
-                    src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-2`}
-                    alt="Bus Factor Trends"
-                    className="w-full h-full object-cover relative z-10"
-                  />
+                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden w-full relative">
+                  <div className="h-[400px] flex items-center justify-center relative">
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
+                    <img 
+                      src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-2`}
+                      alt="Bus Factor Trends"
+                      className="w-full h-full object-cover relative z-10"
+                    />
+                  </div>
+                  <div className="p-4 bg-[#151515] border-t border-white/10">
+                    <h4 className="text-sm font-semibold text-white mb-1">Bus Factor Trends</h4>
+                    <p className="text-xs text-gray-400">Visualizes the percentage of commits owned by the top contributor over time. Consistent high values indicate a critical single point of failure.</p>
+                  </div>
                 </div>
 
               </div>

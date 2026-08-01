@@ -101,7 +101,15 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
   } catch (error) {
     console.error("Failed to fetch from GitHub API:", error);
     // Safe Fallback for Demo
-    return { repoName, codeChurn: 1200, stagnationRiskDays: 2, burnoutRiskPercent: 0, busFactorPercent: 0.85, openPrsCount: 8 };
+    return { 
+      repoName, 
+      codeChurn: 1200, 
+      stagnationRiskDays: 2, 
+      burnoutRiskPercent: 0, 
+      busFactorPercent: 0.85, 
+      openPrsCount: 8,
+      topContributor: { login: 'demo-engineer', avatarUrl: 'https://github.com/github.png', commitsCount: 142 }
+    };
   }
 }
 
