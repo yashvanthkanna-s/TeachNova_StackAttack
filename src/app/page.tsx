@@ -212,35 +212,18 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Grafana Direct Panel Embeds */}
+            {/* Grafana Public Dashboard (Fallback for Auth Issues) */}
             <section className="pt-4">
-              <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana)</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                
-                {/* Panel 1: Code Churn */}
-                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full relative">
-                  <iframe 
-                    src={`https://mellowstarfish834.grafana.net/d-solo/yagvm9h/new-dashboard?orgId=1&from=now-24h&to=now&theme=dark&timezone=browser&var-repo_name=${encodeURIComponent(selectedRepo)}&panelId=panel-1`}
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0"
-                    title="Code Churn Over Time"
-                    className="w-full h-full relative z-10"
-                  ></iframe>
-                </div>
-
-                {/* Panel 2: Bus Factor */}
-                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full relative">
-                  <iframe 
-                    src={`https://mellowstarfish834.grafana.net/d-solo/yagvm9h/new-dashboard?orgId=1&from=now-24h&to=now&theme=dark&timezone=browser&var-repo_name=${encodeURIComponent(selectedRepo)}&panelId=panel-2`}
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0"
-                    title="Bus Factor Trends"
-                    className="w-full h-full relative z-10"
-                  ></iframe>
-                </div>
-
+              <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana Cloud)</h3>
+              <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[600px] w-full relative">
+                <iframe 
+                  src="https://mellowstarfish834.grafana.net/public-dashboards/26a994db98a94131a78fafc8f7d219b6?theme=dark"
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0"
+                  title="Grafana Public Dashboard"
+                  className="w-full h-full relative z-10"
+                ></iframe>
               </div>
             </section>
 
