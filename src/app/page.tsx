@@ -108,6 +108,9 @@ export default function Home() {
                 <h3 className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
                   Rules Engine Analysis
                 </h3>
+                <p className="text-gray-300 leading-relaxed text-base mb-6">
+                  {data.aiRecommendation}
+                </p>
                 <div className="flex-1 flex flex-col gap-3">
                   {data.alerts?.map((alert, idx) => (
                     <div 
