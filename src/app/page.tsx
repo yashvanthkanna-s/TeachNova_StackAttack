@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Activity, GitCommit, RefreshCw, Users, Clock, GitPullRequest, CheckCircle2, AlertTriangle, XCircle, CheckCircle } from "lucide-react";
 import { RepoMetrics, RuleAlert } from "./api/sync/route";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
   const [data, setData] = useState<{
     metrics: RepoMetrics;
     calculatedScore: number;
@@ -27,6 +28,26 @@ export default function Home() {
     "yashvanthkanna-s/saas-ui"
   ];
 
+  const fetchHistory = async (repo: string) => {
+    try {
+      const res = await fetch("/api/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repoName: repo }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setHistory(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch history", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory(selectedRepo);
+  }, [selectedRepo]);
+
   const handleSync = async () => {
     setLoading(true);
     try {
@@ -39,6 +60,7 @@ export default function Home() {
       const result = await res.json();
       if (result.success) {
         setData(result.data);
+        fetchHistory(selectedRepo);
       }
     } catch (error) {
       console.error("Sync failed", error);
@@ -221,6 +243,8 @@ export default function Home() {
 
               </div>
             </section>
+
+
 
           </main>
         )}
