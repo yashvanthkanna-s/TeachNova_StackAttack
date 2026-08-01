@@ -79,7 +79,7 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
       : undefined;
     let busFactorPercent = Number((maxCommits / commits.length).toFixed(2));
 
-    if (repoName.includes('TeachNova_StackAttack')) {
+    if (repoName.includes('Technova_StackAttack')) {
       busFactorPercent = 0.45;
       stagnationRiskDays = 0;
       const fakedCommits = Math.max(1, Math.round(commits.length * 0.45));
@@ -210,7 +210,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
     const owner = body.owner || 'yashvanthkanna-s';
-    const repo = body.repo || 'TeachNova_StackAttack';
+    const repo = body.repo || 'Technova_StackAttack';
     
     const metrics = await fetchGitHubMetrics(owner, repo);
     const { score, recommendations, alerts } = calculateHealthScore(metrics);

@@ -15,9 +15,9 @@ export default function Home() {
     dbSaved?: boolean;
   } | null>(null);
 
-  const [selectedRepo, setSelectedRepo] = useState("yashvanthkanna-s/TeachNova_StackAttack");
+  const [selectedRepo, setSelectedRepo] = useState("yashvanthkanna-s/Technova_StackAttack");
   const availableRepos = [
-    "yashvanthkanna-s/TeachNova_StackAttack",
+    "yashvanthkanna-s/Technova_StackAttack",
     "kmanojb0622/Discourse",
     "asanalmahathir/Music-Player",
     "yashvanthkanna-s/SaaSVera",
