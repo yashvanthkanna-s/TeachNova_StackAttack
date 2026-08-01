@@ -60,7 +60,10 @@ async function fetchGitHubMetrics(owner: string, repo: string): Promise<RepoMetr
       authorCounts[author] = (authorCounts[author] || 0) + 1;
       
       if (c.author && c.author.login && !authorProfiles[author]) {
-        authorProfiles[author] = { login: c.author.login, avatarUrl: c.author.avatar_url };
+        // Append a cache-buster timestamp to force Chrome to download the newest profile picture
+        const baseAvatar = c.author.avatar_url;
+        const freshAvatarUrl = baseAvatar.includes('?') ? `${baseAvatar}&t=${Date.now()}` : `${baseAvatar}?t=${Date.now()}`;
+        authorProfiles[author] = { login: c.author.login, avatarUrl: freshAvatarUrl };
       }
     });
     
