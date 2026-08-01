@@ -1,35 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Git Repository Health Dashboard 🚀
 
-## Getting Started
+**Team Stack Attack | Technova Software Hackathon 2026**
 
-First, run the development server:
+A highly scalable, cloud-native DevOps telemetry dashboard designed to provide engineering teams with deep observability into their development lifecycle. By connecting directly to GitHub and persisting data in AWS RDS, we provide mathematically grounded insights into code churn, stagnation risk, and team burnout—without relying on hallucination-prone AI.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 The Innovation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Deterministic Rules Engine:** We replaced unpredictable AI with strict mathematical thresholds to evaluate project health (0-100 score).
+- **Key Engineer Risk:** Identifies "Bus Factor" by mapping the top contributor's commit share.
+- **Historical Trend Analysis:** Vaults telemetry snapshots in an AWS RDS PostgreSQL database, enabling Grafana to render long-term trendlines.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 💻 Technology Stack
 
-## Learn More
+- **Frontend:** Next.js (React), Tailwind CSS
+- **Backend:** Next.js API Routes (Node.js)
+- **Data Source:** GitHub REST API v3
+- **Cloud Database:** Amazon Web Services (AWS RDS PostgreSQL)
+- **Observability:** Embedded Grafana Cloud
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
 ## 🚀 Deployment Link
 
 - **Live AWS RDS Database Endpoint**: `git-health-db.cvmeemq66uhm.eu-north-1.rds.amazonaws.com`
 - **Frontend Hosting**: Local (`localhost:3000` during presentation)
+
+---
+
+## ⚙️ Getting Started (Local Development)
+
+First, install dependencies:
+```bash
+npm install
+```
+
+Run the development server:
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the dashboard.
