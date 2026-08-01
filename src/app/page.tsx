@@ -212,18 +212,31 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Grafana Public Dashboard (Fallback for Auth Issues) */}
+            {/* Native Next.js Image Render (Bypasses all Grafana Auth Blocks) */}
             <section className="pt-4">
-              <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana Cloud)</h3>
-              <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[600px] w-full relative">
-                <iframe 
-                  src="https://mellowstarfish834.grafana.net/public-dashboards/26a994db98a94131a78fafc8f7d219b6?theme=dark"
-                  width="100%" 
-                  height="100%" 
-                  frameBorder="0"
-                  title="Grafana Public Dashboard"
-                  className="w-full h-full relative z-10"
-                ></iframe>
+              <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana Server-Side Render)</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {/* Panel 1: Code Churn */}
+                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full flex items-center justify-center relative">
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
+                  <img 
+                    src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-1`}
+                    alt="Code Churn Over Time"
+                    className="w-full h-full object-cover relative z-10"
+                  />
+                </div>
+
+                {/* Panel 2: Bus Factor */}
+                <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[400px] w-full flex items-center justify-center relative">
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm z-0">Requesting image from Grafana...</div>
+                  <img 
+                    src={`/api/grafana?repoName=${encodeURIComponent(selectedRepo)}&panelId=panel-2`}
+                    alt="Bus Factor Trends"
+                    className="w-full h-full object-cover relative z-10"
+                  />
+                </div>
+
               </div>
             </section>
 
