@@ -195,7 +195,7 @@ export default function Home() {
               <h3 className="text-sm font-semibold text-white mb-4">Historical Trends (Grafana)</h3>
               <div className="bg-[#111] border border-white/10 rounded-lg overflow-hidden h-[600px] w-full relative">
                 <iframe 
-                  src={`https://mellowstarfish834.grafana.net/public-dashboards/26a994db98a94131a78fafc8f7d219b6?theme=dark&var-repo_name=${encodeURIComponent(selectedRepo)}`}
+                  src="https://mellowstarfish834.grafana.net/public-dashboards/26a994db98a94131a78fafc8f7d219b6?theme=dark" 
                   width="100%" 
                   height="100%" 
                   frameBorder="0"
