@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     return new NextResponse(imageBuffer, {
       headers: {
         'Content-Type': 'image/png',
-        'Cache-Control': 'no-store, max-age=0'
+        'Cache-Control': 'public, max-age=3600'
       }
     });
   } catch (error) {
