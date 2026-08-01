@@ -22,7 +22,7 @@ CREATE INDEX idx_generated_at ON repo_health_snapshots(generated_at);
 
 -- Sample Data representing live telemetry synced from GitHub
 INSERT INTO repo_health_snapshots (repo_name, score, code_churn, stagnation_risk, burnout_risk, bus_factor) 
-VALUES ('Technova_StackAttack', 71, 7403, 0, 0.00, 0.45);
+VALUES ('TechNova_StackAttack', 71, 7403, 0, 0.00, 0.45);
 
 INSERT INTO repo_health_snapshots (repo_name, score, code_churn, stagnation_risk, burnout_risk, bus_factor) 
 VALUES ('asanalmahathir/Music-Player', 50, 124, 218, 0.00, 1.00);
